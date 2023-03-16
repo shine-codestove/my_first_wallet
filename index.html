@@ -19,6 +19,18 @@
     <script>
       $(document).ready(function () {
         console.log("log jquery loading completed");
+        
+        $("#btnNewAccount").click(function () {
+          alert("계좌생성");
+        });
+
+        $("#btnCheckBalance").click(function () {
+          alert("잔액확인");
+        });
+        
+        $("#btnSendEther").click(function () {
+          alert("송금하기");
+        });
       });
     </script>
   </head>
@@ -26,9 +38,9 @@
     <header class="container">
       <h2>이더리움 전자지갑</h2>
       <div class="p-2">
-        <button id="newAccount">계좌생성</button>
-        <button id="checkBalance">잔액확인</button>
-        <button id="sendEther">송금하기</button>
+        <button id="btnNewAccount">계좌생성</button>
+        <button id="btnCheckBalance">잔액확인</button>
+        <button id="btnSendEther">송금하기</button>
       </div>
     </header>
     <section class="container">
