@@ -17,13 +17,56 @@
       crossorigin="anonymous"
     ></script>
     <script>
-        $(document).ready(function () {
-            console.log('log jquery loading completed');
-            
-        })
+      $(document).ready(function () {
+        console.log("log jquery loading completed");
+      });
     </script>
   </head>
   <body>
-
+    <header class="container">
+      <h2>이더리움 전자지갑</h2>
+      <div class="p-2">
+        <button id="newAccount">계좌생성</button>
+        <button id="checkBalance">잔액확인</button>
+        <button id="sendEther">송금하기</button>
+      </div>
+    </header>
+    <section class="container">
+      <div class="py-3">
+        <div class="h5">나의 계좌목록</div>
+        <div class="row border" id="accountList">아무것도 없음</div>
+      </div>
+      <div class="row py-3">
+        <div class="col-4"><span class="h5">송신처(from address)</span></div>
+        <div class="col">
+          <input id="fromAddress" class="w-100" value="" />
+        </div>
+      </div>
+      <div class="row py-3">
+        <div class="col-4"><span class="h5">수신처(to address)</span></div>
+        <div class="col"><input id="toAddress" class="w-100" value="" /></div>
+      </div>
+      <div class="row py-3">
+        <div class="col-4"><span class="h5">보낼 코인(ether)</span></div>
+        <div class="col"><input id="sendCoin" placeholder="" value="1" /></div>
+      </div>
+      <div class="row py-3">
+        <div class="col-4">
+          <span class="h5">비밀번호(account private key)</span>
+        </div>
+        <div class="col">
+          <input
+            class="w-100"
+            type="password"
+            id="yourpw"
+            value="0x4dbbe8bf947a16456cf4e8f9736d5be3a2967e1380c69b5051e822c6069344e1"
+          />
+        </div>
+      </div>
+    </section>
+    <div class="container">
+      <div><h4>Response Message</h4></div>
+      <div id="message" class="border">아무런 메세지가 없음</div>
+    </div>
   </body>
 </html>
