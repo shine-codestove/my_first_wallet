@@ -35,7 +35,7 @@
 
         // 나의 계좌 목록을 가져와서 화면에 보여줌
         web3.eth.getAccounts().then((accounts) => {
-          console.log("이더리움 Accounts", accounts);
+          //   console.log("이더리움 Accounts", accounts);
           const accountsElems = accounts.map(
             (_account, index) => "<div>" + index + ". " + _account + "</div>"
           );
@@ -43,6 +43,9 @@
         });
 
         const makeQrCode = (newAddress) => {
+          //https://github.com/jeromeetienne/jquery-qrcode 에서 최신 버전을 받아서 사용하는 경우 아래코드 사용.
+          //$('#qrcode').qrcode({width: 250,height: 250,text: newAddress});
+
           const qrcode = new QRCode(document.getElementById("qrcode"), {
             width: 250,
             height: 250,
@@ -51,20 +54,55 @@
         };
 
         // ----------------------------------------------
+
+        // 계좌를 생성하고 QRCode로 보여주는 함수
         $("#btnNewAccount").click(function () {
-          alert("계좌생성");
+          //   alert("계좌생성");
           const account = web3.eth.accounts.create();
           console.log("생성된 계좌", account);
           $("#newAddress").val(account.address);
           makeQrCode(account.address);
         });
 
+        // 계좌번호를 가지고 해당 계좌의 잔액을 확인하는 함수
         $("#btnCheckBalance").click(function () {
           alert("잔액확인");
+          const fromAddress = $("#fromAddress").val();
+          web3.eth.getBalance(fromAddress).then((balanceWei) => {
+            const myEther = web3.utils.fromWei(balanceWei, "ether");
+            console.log("내 계좌의 잔액", myEther);
+            $("#message").text("잔액은 " + myEther + " ETH");
+          });
         });
 
-        $("#btnSendEther").click(function () {
+        // 입력한 송, 수신 계좌간에 ether를 송금하는 함수
+        $("#btnSendEther").click(async function () {
           alert("송금하기");
+          const fromAddress = $("#fromAddress").val();
+          const toAddress = $("#toAddress").val();
+          const privateKey = $("#privateKey").val();
+          const sendCoin = $("#sendCoin").val();
+
+          const transaction = await web3.eth.signTransaction(
+            {
+              from: fromAddress,
+              to: toAddress,
+              gas: "21000",
+              maxFeePerGas: "765625000",
+              value: web3.utils.toWei(sendCoin, "ether"),
+            },
+            privateKey
+          );
+
+          console.log("[Signed transaction data in HEX format]", transaction);
+
+          const createReceipt = await web3.eth.sendSignedTransaction(
+            transaction
+          );
+
+          $("#message").html(
+            `Transaction successful with hash: ${createReceipt.transactionHash}`
+          );
         });
       });
     </script>
@@ -73,8 +111,8 @@
     <header class="container">
       <h2>이더리움 전자지갑</h2>
       <div class="p-2">
-        <button id="btnNewAccount">계좌생성</button>
-        <button id="btnCheckBalance">잔액확인</button>
+        <button id="btnNewAccount" class="btn btn-primary">계좌생성</button>
+        <button id="btnCheckBalance" class="btn btn-info">잔액확인</button>
         <button id="btnSendEther">송금하기</button>
       </div>
     </header>
@@ -83,18 +121,19 @@
         <div class="h5">나의 계좌목록</div>
         <div class="row border" id="accountList">아무것도 없음</div>
       </div>
-      <div class="row py-3">
-        <div class="col-4">
-          <span class="h5">생성된 계좌(new address)</span>
-        </div>
-        <div class="col">
-          <input id="newAddress" class="w-100" value="" />
-        </div>
-      </div>
+
       <div class="row py-3">
         <div class="col-4"><span class="h5">송신처(from address)</span></div>
         <div class="col">
           <input id="fromAddress" class="w-100" value="" />
+        </div>
+      </div>
+      <div class="row pb-3">
+        <div class="col-4">
+          <span class="h5">비밀번호(account private key)</span>
+        </div>
+        <div class="col">
+          <input class="w-100" type="password" id="privateKey" value="" />
         </div>
       </div>
       <div class="row py-3">
@@ -103,19 +142,16 @@
       </div>
       <div class="row py-3">
         <div class="col-4"><span class="h5">보낼 코인(ether)</span></div>
-        <div class="col"><input id="sendCoin" placeholder="" value="1" /></div>
+        <div class="col">
+          <input id="sendCoin" placeholder="" value="1" />ETH
+        </div>
       </div>
       <div class="row py-3">
         <div class="col-4">
-          <span class="h5">비밀번호(account private key)</span>
+          <span class="h5">생성된 계좌(new address)</span>
         </div>
         <div class="col">
-          <input
-            class="w-100"
-            type="password"
-            id="yourpw"
-            value="0x4dbbe8bf947a16456cf4e8f9736d5be3a2967e1380c69b5051e822c6069344e1"
-          />
+          <input id="newAddress" class="w-100" value="" />
         </div>
       </div>
     </section>
